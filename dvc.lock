@@ -1,0 +1,77 @@
+schema: '2.0'
+stages:
+  featurize:
+    cmd: python src/featurization.py data feature
+    deps:
+    - path: data
+      md5: a396e43d6ac47e17707b580c374f21b1.dir
+      size: 41004904
+      nfiles: 1814
+    - path: src/featurization.py
+      md5: e5fee473b3b469477e02e66b609ee9c9
+      size: 4938
+    params:
+      params.yaml:
+        feature.batch_size: 10
+        feature.img_height: 150
+        feature.img_width: 150
+    outs:
+    - path: feature
+      md5: abbafc77f557c955aa1e544fdf682d25.dir
+      size: 58990368
+      nfiles: 6
+  train:
+    cmd: python src/training.py feature
+    deps:
+    - path: data
+      md5: a396e43d6ac47e17707b580c374f21b1.dir
+      size: 41004904
+      nfiles: 1814
+    - path: feature
+      md5: abbafc77f557c955aa1e544fdf682d25.dir
+      size: 58990368
+      nfiles: 6
+    - path: src/training.py
+      md5: d42d4d0b8aeef3bb291628e51af1acaf
+      size: 3200
+    params:
+      params.yaml:
+        train.batch_size: 10
+        train.dropout: 0.3
+        train.epochs: 10
+        train.model_name: model1.h5
+        train.optimizer: adam
+    outs:
+    - path: metrics.csv
+      md5: 120f4bd77cca75a88adae36eb49bd77b
+      size: 2908
+    - path: model1.h5
+      md5: fefc0547549b47349c4898a6768f15bb
+      size: 25200712
+  evaluate:
+    cmd: python src/evaluate.py model1.h5 feature plot
+    deps:
+    - path: feature
+      md5: abbafc77f557c955aa1e544fdf682d25.dir
+      size: 58990368
+      nfiles: 6
+    - path: model1.h5
+      md5: fefc0547549b47349c4898a6768f15bb
+      size: 25200712
+    - path: src/evaluate.py
+      md5: 0e7c8505544a6eae7c0cbc7f5b26131e
+      size: 2839
+    params:
+      params.yaml:
+        evaluate.batch_size: 10
+        evaluate.model_name: model1.h5
+    outs:
+    - path: plot/prc.json
+      md5: 96f2c256681389b8c0ff1778f1a3aaab
+      size: 13598
+    - path: plot/roc.json
+      md5: 5b41e057cf856cbcbfb5794b12814acf
+      size: 7529
+    - path: test_result.json
+      md5: 582086946eddc41bd465ab56b634add8
+      size: 247

@@ -1,2 +1,4 @@
 /data
-/model.h5
+/feature
+/metrics.csv
+/model1.h5
